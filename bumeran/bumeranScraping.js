@@ -23,7 +23,7 @@ const PreJob = sequelize.define('PreJob', {
     state: DataTypes.INTEGER,
     date_scraped: DataTypes.DATE
 }, {
-    tableName: 'prejobs',
+    tableName: 'pre_jobs',
     timestamps: false
 });
 
@@ -50,6 +50,7 @@ function convertToDate(dateText) {
 // Keywords de búsqueda de empleos
 // const keywordsJobs = ['Asistente', 'Practicante', 'Asesor', 'Auxiliar', 'Analista', 'Tecnico', 'Ejecutivo', 'Diseñador', 'Representante', 'Desarrollador', 'Coordinador', 'Soporte', 'Jefe', 'Vendedor', 'Promotor', 'Atencion']
 const keywordsJobs = ['Asistente'];
+
 const dateScraped = new Date().toISOString().split('T')[0];
 
 (async () => {
@@ -95,7 +96,7 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 await page.goto(urlBumeran);
 
                 // Espera a que un elemento específico esté presente en la página
-                await page.waitForSelector('h3.sc-kIXKos.fxWEQZ', { timeout: 30000 });
+                await page.waitForSelector('h3.sc-kqVlkB.bPNooN'); // !SUELE CAMBIAR (verificar class)
 
                 // Obtener el contenido de la página
                 const content = await page.content();
@@ -104,12 +105,12 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 // Inicializa una lista para almacenar los datos de los trabajos
                 const jobsData = [];
 
-                // Obtiene los elementos de la página
-                const companyElements = $('h3.sc-kIXKos.fxWEQZ').filter((i, el) => $(el).text().trim() !== '-'); // Filtra los elementos que no contienen '-'
-                const titleElements = $('h3.sc-dCVVYJ.cODsKA'); 
-                const locationElements = $('h3.sc-LAuEU.bjgvMP').filter((index) => index % 2 === 0); // Filtra los elementos pares
-                const dateElements = $('h3.sc-fGSyRc.ceJadi');
-                const link_url = $('a.sc-kJdAmE.etbjmW');
+                // Obtiene los elementos de la página sc-bURIwX gxnZiV ! SUELE CAMBIAR (verificar class)
+                const companyElements = $('h3.sc-kqVlkB.bPNooN').filter((i, el) => $(el).text().trim() !== '-'); // Filtra los elementos que no contienen '-'
+                const titleElements = $('h3.sc-bYFHeD.iMoOJC'); 
+                const locationElements = $('h3.sc-gXccCz.jYIitq').filter((index) => index % 2 === 0); // Filtra los elementos pares
+                const dateElements = $('h3.sc-eCXBzT.dofzTZ');
+                const link_url = $('a.sc-fPCuyW.KnKVV');
 
                 console.log(`Number of companies: ${companyElements.length}`);
                 console.log(`Number of titles: ${titleElements.length}`);

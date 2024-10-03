@@ -27,7 +27,7 @@ async function getJobDescription(jobDescriptionHref) {
         const jobDescriptionParagraphs = [];
         
         // Encuentra el div objetivo
-        const targetDiv = $('.sc-eMHdtS.bbMZeN');
+        const targetDiv = $('.sc-iDtgLy.eBZPcC'); // !SUELE CAMBIAR (verificar class)
         
         if (targetDiv.length) {
             // Itera sobre los elementos dentro del targetDiv
@@ -42,7 +42,7 @@ async function getJobDescription(jobDescriptionHref) {
         const jobDescription = jobDescriptionParagraphs.join('\n');
         
         // Obtiene todos los elementos <h2> con la clase especificada
-        const h2Elements = $('h2.sc-lhTBDi.dPFuJm');
+        const h2Elements = $('h2.sc-jqsdoX.TcmqW'); // !SUELE CAMBIAR (verificar class)
         // Selecciona el quinto <h2> (ajusta el índice según sea necesario)
         let typeOfJob = h2Elements.eq(4).text().trim().split(',')[0];
         
