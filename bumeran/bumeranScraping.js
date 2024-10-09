@@ -73,7 +73,6 @@ const dateScraped = new Date().toISOString().split('T')[0];
                     args: [
                         '--ignore-certificate-errors',
                         '--ignore-ssl-errors',
-                        '--incognito',
                         `--proxy-server=${proxyUrl}`, // Agrega el proxy al navegador
                     ],
                  });
@@ -88,9 +87,9 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 });
 
                 // Navega a una página que muestra la IP para verificar el proxy
-                await page.goto('https://api.ipify.org');
-                const ipAddress = await page.evaluate(() => document.body.textContent);
-                console.log(`Current IP Address: ${ipAddress}`);
+                // await page.goto('https://api.ipify.org');
+                // const ipAddress = await page.evaluate(() => document.body.textContent);
+                // console.log(`Current IP Address: ${ipAddress}`);
 
                 // Navega a la URL de Bumeran
                 await page.goto(urlBumeran);

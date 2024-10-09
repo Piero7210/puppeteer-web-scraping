@@ -52,7 +52,7 @@ async function getJobDescription(jobDescriptionHref) {
         // Formatea los resultados
         const result = {
             type_of_job: typeOfJob.trim(),
-            description: jobDescriptionParagraphs,
+            description: jobDescriptionParagraphs.join('\n'),
         };
         console.log(result);
         console.log('---------------------------------');
