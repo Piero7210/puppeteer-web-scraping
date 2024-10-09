@@ -73,5 +73,5 @@ async function getJobDescription(jobDescriptionHref) {
 module.exports = { getJobDescription };
 
 // Ejemplo de uso
-const jobDescriptionHref = 'https://www.bumeran.com.pe/empleos/analista-de-transformacion-digital-y-procesos-experis-peru-1116503185.html';
-getJobDescription(jobDescriptionHref).then(result => console.log(result));
+// const jobDescriptionHref = 'https://www.bumeran.com.pe/empleos/analista-de-transformacion-digital-y-procesos-experis-peru-1116503185.html';
+// getJobDescription(jobDescriptionHref).then(result => console.log(result));
