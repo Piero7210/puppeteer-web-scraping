@@ -73,7 +73,6 @@ const dateScraped = new Date().toISOString().split('T')[0];
                     args: [
                         '--ignore-certificate-errors',
                         '--ignore-ssl-errors',
-                        '--incognito',
                         `--proxy-server=${proxyUrl}`, // Agrega el proxy al navegador
                     ],
                  });
@@ -88,15 +87,15 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 });
 
                 // Navega a una página que muestra la IP para verificar el proxy
-                await page.goto('https://api.ipify.org');
-                const ipAddress = await page.evaluate(() => document.body.textContent);
-                console.log(`Current IP Address: ${ipAddress}`);
+                // await page.goto('https://api.ipify.org');
+                // const ipAddress = await page.evaluate(() => document.body.textContent);
+                // console.log(`Current IP Address: ${ipAddress}`);
 
                 // Navega a la URL de Bumeran
                 await page.goto(urlBumeran);
 
                 // Espera a que un elemento específico esté presente en la página
-                await page.waitForSelector('h3.sc-kqVlkB.bPNooN'); // !SUELE CAMBIAR (verificar class)
+                await page.waitForSelector('#listado-avisos');
 
                 // Obtener el contenido de la página
                 const content = await page.content();
@@ -104,13 +103,30 @@ const dateScraped = new Date().toISOString().split('T')[0];
 
                 // Inicializa una lista para almacenar los datos de los trabajos
                 const jobsData = [];
+                const companyElements = [];
+                const titleElements = [];
+                const locationElements = [];
+                const dateElements = [];
+                const link_url = [];
 
-                // Obtiene los elementos de la página sc-bURIwX gxnZiV ! SUELE CAMBIAR (verificar class)
-                const companyElements = $('h3.sc-kqVlkB.bPNooN').filter((i, el) => $(el).text().trim() !== '-'); // Filtra los elementos que no contienen '-'
-                const titleElements = $('h3.sc-bYFHeD.iMoOJC'); 
-                const locationElements = $('h3.sc-gXccCz.jYIitq').filter((index) => index % 2 === 0); // Filtra los elementos pares
-                const dateElements = $('h3.sc-eCXBzT.dofzTZ');
-                const link_url = $('a.sc-fPCuyW.KnKVV');
+                for (let i = 1; i <= 20; i++) {
+                    let company= $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div > div > div > span > h3`)
+                    .filter((i, el) => $(el).text().trim() !== '-'); // Filtra los elementos que no contienen '-'
+                    companyElements.push(company);
+    
+                    let title = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span > h3`);
+                    titleElements.push(title);
+    
+                    let location = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(2) > div > div:nth-of-type(1) > span > h3`)
+                    .filter((index) => index % 2 === 0); // Filtra los elementos pares
+                    locationElements.push(location)
+    
+                    let date = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div > div > div > div > h3`);
+                    dateElements.push(date);
+    
+                    let link = $(`#listado-avisos > div:nth-of-type(${i}) > a`); 
+                    link_url.push(link);                    
+                }
 
                 console.log(`Number of companies: ${companyElements.length}`);
                 console.log(`Number of titles: ${titleElements.length}`);

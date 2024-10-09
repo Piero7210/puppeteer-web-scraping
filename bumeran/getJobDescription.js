@@ -17,7 +17,7 @@ async function getJobDescription(jobDescriptionHref) {
         // Navega a la URL de la descripción del empleo
         await page.goto(jobDescriptionHref, { waitUntil: 'networkidle2' });
         // Espera a que un elemento específico esté presente en la página
-        await page.waitForSelector('.sc-eMHdtS.bbMZeN', { timeout: 60000 });
+        await page.waitForSelector('#ficha-detalle', { timeout: 30000 });
 
         // Obtén el HTML de la página
         const html = await page.content();
@@ -27,7 +27,7 @@ async function getJobDescription(jobDescriptionHref) {
         const jobDescriptionParagraphs = [];
         
         // Encuentra el div objetivo
-        const targetDiv = $('.sc-iDtgLy.eBZPcC'); // !SUELE CAMBIAR (verificar class)
+        const targetDiv = $('#ficha-detalle > div:nth-child(2) > div > div:nth-child(1)');
         
         if (targetDiv.length) {
             // Itera sobre los elementos dentro del targetDiv
@@ -37,14 +37,9 @@ async function getJobDescription(jobDescriptionHref) {
                 }
             });
         }
-
-        // Combina los párrafos en un solo string
-        const jobDescription = jobDescriptionParagraphs.join('\n');
-        
-        // Obtiene todos los elementos <h2> con la clase especificada
-        const h2Elements = $('h2.sc-jqsdoX.TcmqW'); // !SUELE CAMBIAR (verificar class)
-        // Selecciona el quinto <h2> (ajusta el índice según sea necesario)
-        let typeOfJob = h2Elements.eq(4).text().trim().split(',')[0];
+    
+        // Obtiene el elemento que contiene el tipo de trabajo
+        let typeOfJob = $('#ficha-detalle > div:nth-child(2) > div > div:nth-child(1) > div:nth-child(4) > div > ul > div:nth-child(1) > li:nth-child(3) > h2');
         
         // Lista de tipos de trabajo válidos
         const validJobTypes = ['Full-time', 'Part-time', 'Por Horas', 'Pasantia'];
@@ -57,7 +52,7 @@ async function getJobDescription(jobDescriptionHref) {
         // Formatea los resultados
         const result = {
             type_of_job: typeOfJob.trim(),
-            description: jobDescription,
+            description: jobDescriptionParagraphs.join('\n'),
         };
         console.log(result);
         console.log('---------------------------------');
@@ -78,5 +73,5 @@ async function getJobDescription(jobDescriptionHref) {
 module.exports = { getJobDescription };
 
 // Ejemplo de uso
-// const jobDescriptionHref = 'https://www.bumeran.com.pe/empleos/desarrollador-programador-jr--exp--en--net-y-sql-fiorella-representaciones-1116364403.html';
+// const jobDescriptionHref = 'https://www.bumeran.com.pe/empleos/analista-de-transformacion-digital-y-procesos-experis-peru-1116503185.html';
 // getJobDescription(jobDescriptionHref).then(result => console.log(result));
