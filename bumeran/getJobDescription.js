@@ -17,7 +17,7 @@ async function getJobDescription(jobDescriptionHref) {
         // Navega a la URL de la descripción del empleo
         await page.goto(jobDescriptionHref, { waitUntil: 'networkidle2' });
         // Espera a que un elemento específico esté presente en la página
-        await page.waitForSelector('.sc-eMHdtS.bbMZeN', { timeout: 60000 });
+        await page.waitForSelector('.sc-iDtgLy.eBZPcC', { timeout: 60000 });
 
         // Obtén el HTML de la página
         const html = await page.content();
