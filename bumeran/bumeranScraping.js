@@ -103,6 +103,7 @@ const dateScraped = new Date().toISOString().split('T')[0];
 
                 // Inicializa una lista para almacenar los datos de los trabajos
                 const jobsData = [];
+                
                 const companyElements = [];
                 const titleElements = [];
                 const locationElements = [];
@@ -112,20 +113,28 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 for (let i = 1; i <= 20; i++) {
                     let company= $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div > div > div > span > h3`)
                     .filter((i, el) => $(el).text().trim() !== '-'); // Filtra los elementos que no contienen '-'
-                    companyElements.push(company);
-    
+                    
                     let title = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) > span > h3`);
-                    titleElements.push(title);
-    
+                    
                     let location = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(2) > div > div:nth-of-type(1) > span > h3`)
                     .filter((index) => index % 2 === 0); // Filtra los elementos pares
-                    locationElements.push(location)
-    
+                    
                     let date = $(`#listado-avisos > div:nth-of-type(${i}) > a > div > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(2) > div > div > div > div > h3`);
-                    dateElements.push(date);
-    
+                    
                     let link = $(`#listado-avisos > div:nth-of-type(${i}) > a`); 
-                    link_url.push(link);                    
+                    
+                    // Verifica si hay más trabajos en la página
+                    if (!company.length || !title.length || !location.length || !date.length) {
+                        console.log("No more jobs found, ending pagination.");
+                        break;
+                    }
+                    
+                    // Si se encontraron elementos, los agrega a las listas
+                    companyElements.push(company);
+                    titleElements.push(title);
+                    locationElements.push(location)
+                    dateElements.push(date);
+                    link_url.push(link);
                 }
 
                 console.log(`Number of companies: ${companyElements.length}`);
