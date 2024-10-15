@@ -48,8 +48,8 @@ function convertToDate(dateText) {
 }
 
 // Keywords de búsqueda de empleos
-// const keywordsJobs = ['Asistente', 'Practicante', 'Asesor', 'Auxiliar', 'Analista', 'Tecnico', 'Ejecutivo', 'Diseñador', 'Representante', 'Desarrollador', 'Coordinador', 'Soporte', 'Jefe', 'Vendedor', 'Promotor', 'Atencion']
-const keywordsJobs = ['Asistente'];
+const keywordsJobs = ['Asistente', 'Practicante', 'Asesor', 'Auxiliar', 'Analista', 'Tecnico', 'Ejecutivo', 'Disenador', 'Representante', 'Desarrollador', 'Coordinador', 'Soporte', 'Jefe', 'Vendedor', 'Promotores', 'Atencion']
+// const keywordsJobs = ['Asistente'];
 
 const dateScraped = new Date().toISOString().split('T')[0];
 
@@ -126,7 +126,7 @@ const dateScraped = new Date().toISOString().split('T')[0];
                     // Verifica si hay más trabajos en la página
                     if (!company.length || !title.length || !location.length || !date.length) {
                         console.log("No more jobs found, ending pagination.");
-                        break;
+                        continue;
                     }
                     
                     // Si se encontraron elementos, los agrega a las listas
@@ -189,6 +189,10 @@ const dateScraped = new Date().toISOString().split('T')[0];
                 try {
                     await sequelize.authenticate();
                     for (const job of jobsData) {
+                        if (job.company === '' || job.title === '' || job.location === '' || job.description === '') {
+                            console.log('Skipping job with missing data');
+                            continue;
+                        }
                         await PreJob.create({
                             company_name: job.company,
                             job_title: job.title,
