@@ -2,7 +2,7 @@ const cheerio = require("cheerio");
 const fetch = require('node-fetch');
 const { Sequelize, DataTypes } = require('sequelize');
 const { HttpsProxyAgent } = require('https-proxy-agent');
-
+//Enlcae principal Frontend : https://www.linkedin.com/jobs/search?keywords={keyword}&location=Perú&geoId=102927786&f_TPR=r604800&position=1&pageNum=0
 
 // Conexión a la base de datos con Sequelize
 const sequelize = new Sequelize('jobs_db', 'root', '', {
