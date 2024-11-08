@@ -2,10 +2,10 @@ const cheerio = require("cheerio");
 const fetch = require('node-fetch');
 const { Sequelize, DataTypes } = require('sequelize');
 const { HttpsProxyAgent } = require('https-proxy-agent');
-
+//Enlcae principal Frontend : https://www.linkedin.com/jobs/search?keywords={keyword}&location=Perú&geoId=102927786&f_TPR=r604800&position=1&pageNum=0
 
 // Conexión a la base de datos con Sequelize
-const sequelize = new Sequelize('jobs_db', 'root', '987210', {
+const sequelize = new Sequelize('jobs_db', 'root', '', {
     host: 'localhost',
     dialect: 'mysql'
 });
@@ -89,6 +89,7 @@ async function searchJobs (keyword, page) {
                 "Referer": "https://www.linkedin.com/"
             }
         });
+        console.log(`https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search?keywords=${encodeURIComponent(keyword)}&location=Per%C3%BA&geoId=102927786&f_TPR=r604800&position=1&pageNum=0&original_referer=&start=${offset}`)
         console.log(`Status de searchJobs: ${response.status}`);        
         const content = await response.text();
         const $ = cheerio.load(content);
@@ -97,6 +98,7 @@ async function searchJobs (keyword, page) {
         const jobs = $(".job-search-card");
 
         jobs.each((index, element) => {
+            //  if (jobData.length >= 2) return false;  // Limita a 15 trabajos
             const id = $(element).attr("data-entity-urn")?.split(":")?.[3];
             const link = $(element).find("a").attr("href")?.split("?")[0];
             const jobTitle = $(element).find("h3.base-search-card__title").text().trim();
@@ -152,16 +154,13 @@ async function sleep(ms) {
 
 // Ejecutar el script principal
 (async () => {
-    // Palabras clave para buscar trabajos
     const keywords = ['Asistente', 'Practicante', 'Asesor', 'Auxiliar', 'Analista', 'Tecnico', 'Ejecutivo', 'Diseñador', 'Representante', 'Desarrollador', 'Coordinador', 'Soporte', 'Jefe', 'Vendedor', 'Promotor', 'Atencion'];
-    // Prueba con una sola palabra clave
-    // const keywords = ['Data']; 
-
+    //const keywords = ['Promotor', 'Atencion']
     for (const keyword of keywords) {
         let pageNumber = 1;
+        let jobCount = 0;  // Contador de trabajos por keyword
 
-        while (true) {
-            // Reintentar la función searchJobs hasta nro veces si es necesario
+        while (jobCount < 60) {  // Limitar a 2 trabajos por keyword
             const jobs = await retry(() => searchJobs(keyword, pageNumber), 5, 5000);       
             
             if (jobs.length === 0) {
@@ -170,10 +169,10 @@ async function sleep(ms) {
             }
 
             for (const job of jobs) {
-                // Reintentar la función getJobDetails hasta 3 veces si es necesario
+                if (jobCount >= 60) break;  // Si ya se tienen 2 trabajos, se detiene
+
                 const jobDetails = await retry(() => getJobDetails(job?.id), 5, 5000);
 
-                // Verificar si jobDetails tiene type_of_job y jobDescription
                 if (!jobDetails.type_of_job || !jobDetails.jobDescription) {
                     console.log(`Detalles del trabajo incompletos para el trabajo ID: ${job?.id}. No se guardará en la base de datos.`);
                     continue;
@@ -190,19 +189,20 @@ async function sleep(ms) {
                     link_url: job.link || `https://www.linkedin.com/jobs/view/${job.id}`,
                     keyword: keyword,
                     state: 1,
-                    date_scraped: new Date().toISOString().split('T')[0],
+                    //date_scraped: new Date().toISOString().split('T')[0],
                 };
 
                 try {
                    await sequelize.authenticate();
                    await PreJob.create(jobData); 
+                   jobCount++;  // Incrementar el contador al guardar el trabajo
                 } catch (error) {
-                    console.log(`Error al guardar el trabajo en la base de datos: ${error.message}`);                    
+                    console.log(`Error al guardar el trabajo en la base de datos: ${error.message}`);
                 }
 
-                // Espera 5 segundos antes de continuar con el siguiente trabajo
                 await sleep(5000);
             }
+
             pageNumber++;
         }
     }
